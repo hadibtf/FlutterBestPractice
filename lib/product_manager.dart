@@ -20,7 +20,6 @@ class _ProductManagerState extends State<ProductManager> {
     _products.add(widget.startingProduct);
     super.initState();
   }
-
   @override
   Widget build(BuildContext context) {
     return new Column(
