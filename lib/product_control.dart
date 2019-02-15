@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import './product_manager.dart';
 
 class ProductControl extends StatelessWidget {
   final Function addProduct;
