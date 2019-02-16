@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import './pages/home.dart';
+import './pages/auth.dart';
 
 void main() => runApp(ToDoApp());
 
@@ -13,7 +13,7 @@ class ToDoApp extends StatelessWidget {
         accentColor: Colors.purple,
         primarySwatch: Colors.deepOrange,
       ),
-      home: HomePage(),
+      home: AuthPage(),
     );
   }
 }
