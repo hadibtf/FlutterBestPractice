@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import './pages/product.dart';
 import './pages/products.dart';
 import './pages/products_admin.dart';
+import './pages/auth.dart';
 
 void main() => runApp(MyApp());
 
@@ -36,10 +37,11 @@ class _MyAppState extends State<MyApp> {
         accentColor: Colors.purple,
         primarySwatch: Colors.deepOrange,
       ),
-//      home: AuthPage(),
+//      home: new AuthPage(),
       routes: {
-        "/": (BuildContext context) => ProductsPage(products: _products),
-        "/admin": (BuildContext context) => ProductsAdminPage(
+        "/": (BuildContext context) => new AuthPage(),
+        "/products": (BuildContext context) => new ProductsPage(products: _products),
+        "/admin": (BuildContext context) => new ProductsAdminPage(
             addProduct: _addProduct, deleteProduct: _deleteProduct),
       },
       onGenerateRoute: (RouteSettings settings) {
@@ -61,7 +63,7 @@ class _MyAppState extends State<MyApp> {
       },
       onUnknownRoute: (RouteSettings settings) {
         return new MaterialPageRoute(
-          builder: (BuildContext context) => ProductsPage(
+          builder: (BuildContext context) => new ProductsPage(
                 products: _products,
               ),
         );
