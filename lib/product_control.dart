@@ -8,6 +8,9 @@ class ProductControl extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return RaisedButton(
+      elevation: 30,
+
+      splashColor: Colors.blue,
       onPressed: () {
         addProduct({'title': 'chocolate', 'image': './images/me.png'});
       },

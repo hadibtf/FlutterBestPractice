@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import './pages/auth.dart';
-import './pages/products_admin.dart';
-import './pages/products.dart';
+
 import './pages/product.dart';
+import './pages/products.dart';
+import './pages/products_admin.dart';
 
 void main() => runApp(MyApp());
 
@@ -14,9 +14,9 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  List<Map<String, String>> _products = [];
+  List<Map<String, dynamic>> _products = [];
 
-  void _addProduct(Map<String, String> product) {
+  void _addProduct(Map<String, dynamic> product) {
     setState(() {
       _products.add(product);
     });
@@ -38,11 +38,9 @@ class _MyAppState extends State<MyApp> {
       ),
 //      home: AuthPage(),
       routes: {
-        "/": (BuildContext context) => ProductsPage(
-            products: _products,
-            addProduct: _addProduct,
-            deleteProduct: _deleteProduct),
-        "/admin": (BuildContext context) => ProductsAdminPage(),
+        "/": (BuildContext context) => ProductsPage(products: _products),
+        "/admin": (BuildContext context) => ProductsAdminPage(
+            addProduct: _addProduct, deleteProduct: _deleteProduct),
       },
       onGenerateRoute: (RouteSettings settings) {
         final List<String> pathElements = settings.name.split("/");
@@ -51,6 +49,7 @@ class _MyAppState extends State<MyApp> {
         }
         if (pathElements[1] == "product") {
           final int index = int.parse(pathElements[2]);
+          print("()-()-()-()-()-()-()-()-()-()-()-()" + settings.toString());
           return new MaterialPageRoute<bool>(
             builder: (BuildContext context) => new ProductPage(
                   title: _products[index]["title"],
@@ -63,9 +62,8 @@ class _MyAppState extends State<MyApp> {
       onUnknownRoute: (RouteSettings settings) {
         return new MaterialPageRoute(
           builder: (BuildContext context) => ProductsPage(
-              products: _products,
-              addProduct: _addProduct,
-              deleteProduct: _deleteProduct),
+                products: _products,
+              ),
         );
       },
     );
