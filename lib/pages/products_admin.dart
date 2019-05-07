@@ -22,6 +22,7 @@ class ProductsAdminPage extends StatelessWidget {
                 title: new Text("Choose"),
               ),
               new ListTile(
+                leading: Icon(Icons.shop,color: Colors.blue,),
                 title: new Text("All Products"),
                 onTap: () => Navigator.pushReplacementNamed(context, "/products"),
               ),

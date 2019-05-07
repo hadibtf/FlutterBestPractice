@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 
+import './pages/auth.dart';
 import './pages/product.dart';
 import './pages/products.dart';
 import './pages/products_admin.dart';
-import './pages/auth.dart';
 
-void main() => runApp(MyApp());
+void main() {
+//  debugPaintSizeEnabled = true;
+  runApp(MyApp());
+}
 
 class MyApp extends StatefulWidget {
   @override
@@ -40,7 +43,8 @@ class _MyAppState extends State<MyApp> {
 //      home: new AuthPage(),
       routes: {
         "/": (BuildContext context) => new AuthPage(),
-        "/products": (BuildContext context) => new ProductsPage(products: _products),
+        "/products": (BuildContext context) =>
+            new ProductsPage(products: _products),
         "/admin": (BuildContext context) => new ProductsAdminPage(
             addProduct: _addProduct, deleteProduct: _deleteProduct),
       },

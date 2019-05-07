@@ -10,25 +10,40 @@ class ProductsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-        drawer: new Drawer(
-          child: new Column(
-            children: <Widget>[
-              new AppBar(
-                automaticallyImplyLeading: false,
-                title: new Text("Choose"),
+      drawer: new Drawer(
+        child: new Column(
+          children: <Widget>[
+            new AppBar(
+              automaticallyImplyLeading: false,
+              title: new Text("Choose"),
+            ),
+            new ListTile(
+              leading: new Icon(
+                Icons.edit,
+                color: Colors.grey,
               ),
-              new ListTile(
-                title: new Text("Manage Products"),
-                onTap: () {
-                  Navigator.pushReplacementNamed(context, "/admin");
-                },
-              )
-            ],
-          ),
+              title: new Text("Manage Products"),
+              onTap: () {
+                Navigator.pushReplacementNamed(context, "/admin");
+              },
+            ),
+          ],
         ),
-        appBar: new AppBar(
-          title: new Text('EasyList'),
-        ),
-        body: ProductManager(products: products));
+      ),
+      appBar: new AppBar(
+        title: new Text('EasyList'),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(
+              Icons.favorite,
+            ),
+            onPressed: () {},
+          )
+        ],
+      ),
+      body: ProductManager(
+        products: products,
+      ),
+    );
   }
 }
