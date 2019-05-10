@@ -55,11 +55,12 @@ class _MyAppState extends State<MyApp> {
         }
         if (pathElements[1] == "product") {
           final int index = int.parse(pathElements[2]);
-          print("()-()-()-()-()-()-()-()-()-()-()-()" + settings.toString());
           return new MaterialPageRoute<bool>(
             builder: (BuildContext context) => new ProductPage(
-                  title: _products[index]["title"],
-                  imageUrl: _products[index]["image"],
+                  title: _products[index]['title'],
+                  imageUrl: _products[index]['image'],
+                  price: _products[index]['price'],
+                  description: _products[index]['description'],
                 ),
           );
         }
