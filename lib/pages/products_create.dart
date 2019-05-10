@@ -22,50 +22,72 @@ class _ProductCreatePageState extends State<ProductsCreatePage> {
       margin: EdgeInsets.all(10.0),
       child: new ListView(
         children: <Widget>[
-          new TextField(
-            decoration: new InputDecoration(labelText: "Product Title"),
-            onChanged: (String value) {
-              setState(() {
-                _titleValue = value;
-              });
-            },
+          _buildTitleTextField(),
+          _buildDescriptionTextField(),
+          _buildPriceTextField(),
+          new SizedBox(
+            height: 10.0,
           ),
-          new TextField(
-            decoration: new InputDecoration(labelText: "Product Description"),
-            maxLines: 4,
-            onChanged: (String value) {
-              setState(() {
-                _descriptionValue = value;
-              });
-            },
-          ),
-          new TextField(
-            decoration: new InputDecoration(labelText: "Product Price"),
-            keyboardType: TextInputType.number,
-            onChanged: (String value) {
-              setState(() {
-                _priceValue = double.parse(value);
-              });
-            },
-          ),
-          new SizedBox(height: 10.0,),
           new RaisedButton(
             color: Theme.of(context).accentColor,
             textColor: Colors.white,
             child: new Text("Create"),
-            onPressed: () {
-              final Map<String, dynamic> product = {
-                'title': _titleValue,
-                'description': _descriptionValue,
-                'price': _priceValue,
-                'image': 'images/me.png'
-              };
-              widget.addProduct(product);
-              Navigator.pushReplacementNamed(context, "/products");
-            },
+            onPressed: _submitForm,
           )
         ],
       ),
+    );
+  }
+
+  void _submitForm() {
+    final Map<String, dynamic> product = {
+      'title': _titleValue,
+      'description': _descriptionValue,
+      'price': _priceValue,
+      'image': 'images/me.png'
+    };
+    widget.addProduct(product);
+    Navigator.pushReplacementNamed(context, "/products");
+  }
+
+  Widget _buildTitleTextField() {
+    return new TextField(
+      decoration: new InputDecoration(labelText: "Product Title"),
+      onChanged: (String value) {
+        setState(
+          () {
+            _titleValue = value;
+          },
+        );
+      },
+    );
+  }
+
+  Widget _buildDescriptionTextField() {
+    return new TextField(
+      decoration: new InputDecoration(labelText: "Product Description"),
+      maxLines: 4,
+      onChanged: (String value) {
+        setState(
+          () {
+            _descriptionValue = value;
+          },
+        );
+      },
+    );
+  }
+
+  Widget _buildPriceTextField() {
+    return new TextField(
+      decoration: new InputDecoration(labelText: "Product Price"),
+      keyboardType: TextInputType.number,
+      onChanged: (String value) {
+        setState(
+          () {
+            _priceValue = double.parse(value);
+          },
+        );
+      },
     );
   }
 }

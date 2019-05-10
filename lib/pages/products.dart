@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../widgets/products/products.dart';
+import '../widgets/ui_elements/side_drawer.dart';
 
 class ProductsPage extends StatelessWidget {
   final List<Map<String, dynamic>> products;
@@ -10,38 +11,28 @@ class ProductsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-      drawer: new Drawer(
-        child: new Column(
-          children: <Widget>[
-            new AppBar(
-              automaticallyImplyLeading: false,
-              title: new Text("Choose"),
-            ),
-            new ListTile(
-              leading: new Icon(
-                Icons.edit,
-                color: Colors.grey,
+        drawer: _buildSideDrawer(),
+        appBar: new AppBar(
+          title: new Text('EasyList'),
+          actions: <Widget>[
+            IconButton(
+              icon: Icon(
+                Icons.favorite,
               ),
-              title: new Text("Manage Products"),
-              onTap: () {
-                Navigator.pushReplacementNamed(context, "/admin");
-              },
-            ),
+              onPressed: () {},
+            )
           ],
         ),
-      ),
-      appBar: new AppBar(
-        title: new Text('EasyList'),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(
-              Icons.favorite,
-            ),
-            onPressed: () {},
-          )
-        ],
-      ),
-      body: Products(products: products)
+        body: Products(products: products));
+  }
+
+  Widget _buildSideDrawer() {
+    return new SideDrawer(
+      drawerTitleText: 'Choose',
+      listTileText: 'Manage products',
+      listTileIcon: Icons.edit,
+      listTileIconColor: Colors.grey,
+      routeName: '/admin',
     );
   }
 }

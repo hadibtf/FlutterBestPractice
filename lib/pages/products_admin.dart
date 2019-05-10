@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import './products_create.dart';
 import './products_list.dart';
+import '../widgets/ui_elements/side_drawer.dart';
 
 class ProductsAdminPage extends StatelessWidget {
   final Function addProduct;
@@ -14,21 +15,7 @@ class ProductsAdminPage extends StatelessWidget {
     return new DefaultTabController(
       length: 2,
       child: new Scaffold(
-        drawer: new Drawer(
-          child: new Column(
-            children: <Widget>[
-              new AppBar(
-                automaticallyImplyLeading: false,
-                title: new Text("Choose"),
-              ),
-              new ListTile(
-                leading: Icon(Icons.shop,color: Colors.blue,),
-                title: new Text("All Products"),
-                onTap: () => Navigator.pushReplacementNamed(context, "/products"),
-              ),
-            ],
-          ),
-        ),
+        drawer: _buildSideDrawer(),
         appBar: new AppBar(
           title: new Text('Manage Products'),
           bottom: new TabBar(tabs: <Widget>[
@@ -51,6 +38,16 @@ class ProductsAdminPage extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildSideDrawer() {
+    return SideDrawer(
+      drawerTitleText: 'Choose',
+      listTileText: 'All products',
+      listTileIcon: Icons.shop,
+      listTileIconColor: Colors.blue,
+      routeName: '/products',
     );
   }
 }
