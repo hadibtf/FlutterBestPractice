@@ -8,12 +8,15 @@ class SideDrawer extends StatelessWidget {
   final IconData listTileIcon;
   final Color listTileIconColor;
 
+  final BuildContext context;
+
   SideDrawer(
       {this.drawerTitleText,
       this.listTileText,
       this.routeName,
       this.listTileIcon,
-      this.listTileIconColor});
+      this.listTileIconColor,
+      this.context});
 
   @override
   Widget build(BuildContext context) {

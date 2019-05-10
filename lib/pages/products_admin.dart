@@ -15,7 +15,7 @@ class ProductsAdminPage extends StatelessWidget {
     return new DefaultTabController(
       length: 2,
       child: new Scaffold(
-        drawer: _buildSideDrawer(),
+        drawer: _buildSideDrawer(context),
         appBar: new AppBar(
           title: new Text('Manage Products'),
           bottom: new TabBar(tabs: <Widget>[
@@ -41,13 +41,14 @@ class ProductsAdminPage extends StatelessWidget {
     );
   }
 
-  Widget _buildSideDrawer() {
+  Widget _buildSideDrawer(BuildContext context) {
     return SideDrawer(
       drawerTitleText: 'Choose',
       listTileText: 'All products',
       listTileIcon: Icons.shop,
       listTileIconColor: Colors.blue,
       routeName: '/products',
+      context: context,
     );
   }
 }

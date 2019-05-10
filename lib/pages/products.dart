@@ -11,7 +11,7 @@ class ProductsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-        drawer: _buildSideDrawer(),
+        drawer: _buildSideDrawer(context),
         appBar: new AppBar(
           title: new Text('EasyList'),
           actions: <Widget>[
@@ -26,13 +26,14 @@ class ProductsPage extends StatelessWidget {
         body: Products(products: products));
   }
 
-  Widget _buildSideDrawer() {
+  Widget _buildSideDrawer(BuildContext context) {
     return new SideDrawer(
       drawerTitleText: 'Choose',
       listTileText: 'Manage products',
       listTileIcon: Icons.edit,
       listTileIconColor: Colors.grey,
       routeName: '/admin',
+      context: context,
     );
   }
 }
