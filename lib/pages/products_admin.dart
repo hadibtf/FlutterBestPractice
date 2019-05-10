@@ -18,31 +18,39 @@ class ProductsAdminPage extends StatelessWidget {
         drawer: _buildSideDrawer(context),
         appBar: new AppBar(
           title: new Text('Manage Products'),
-          bottom: new TabBar(tabs: <Widget>[
-            new Tab(
-              icon: new Icon(Icons.list),
-              text: "My Product",
-            ),
-            new Tab(
-              icon: new Icon(Icons.create),
-              text: "Create Products",
-            ),
-          ]),
+          bottom: _buildTabBar(),
         ),
-        body: new TabBarView(
-          children: <Widget>[
-            new ProductsCreatePage(
-              addProduct: addProduct,
-            ),
-            new ProductListPage(),
-          ],
-        ),
+        body: _buildTabBarView(),
       ),
     );
   }
 
+  TabBarView _buildTabBarView() {
+    return new TabBarView(
+      children: <Widget>[
+        new ProductsCreatePage(
+          addProduct: addProduct,
+        ),
+        new ProductListPage(),
+      ],
+    );
+  }
+
+  TabBar _buildTabBar() {
+    return new TabBar(tabs: <Widget>[
+      new Tab(
+        icon: new Icon(Icons.list),
+        text: "My Product",
+      ),
+      new Tab(
+        icon: new Icon(Icons.create),
+        text: "Create Products",
+      ),
+    ]);
+  }
+
   Widget _buildSideDrawer(BuildContext context) {
-    return SideDrawer(
+    return new SideDrawer(
       drawerTitleText: 'Choose',
       listTileText: 'All products',
       listTileIcon: Icons.shop,
