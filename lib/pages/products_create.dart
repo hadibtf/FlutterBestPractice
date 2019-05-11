@@ -7,7 +7,7 @@ class ProductsCreatePage extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() {
-    return new _ProductCreatePageState();
+    return _ProductCreatePageState();
   }
 }
 
@@ -16,35 +16,41 @@ class _ProductCreatePageState extends State<ProductsCreatePage> {
   String _descriptionValue;
   double _priceValue;
 
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
     final double deviceWidth = MediaQuery.of(context).size.width;
     final double targetWidth = deviceWidth > 550.0 ? 500.0 : deviceWidth * 0.95;
     final double targetPadding = deviceWidth - targetWidth;
 
-    return new Container(
+    return Container(
       width: targetWidth,
       margin: EdgeInsets.all(10.0),
-      child: new ListView(
-        padding: EdgeInsets.symmetric(horizontal: targetPadding / 2),
-        children: <Widget>[
-          _buildTitleTextField(),
-          _buildDescriptionTextField(),
-          _buildPriceTextField(),
-          new SizedBox(
-            height: 10.0,
-          ),
-          new RaisedButton(
-            textColor: Colors.white,
-            child: new Text("Create"),
-            onPressed: _submitForm,
-          )
-        ],
+      child: Form(
+        key: _formKey,
+        child: ListView(
+          padding: EdgeInsets.symmetric(horizontal: targetPadding / 2),
+          children: <Widget>[
+            _buildTitleTextFormField(),
+            _buildDescriptionTextFormField(),
+            _buildPriceTextFormField(),
+            SizedBox(
+              height: 10.0,
+            ),
+            RaisedButton(
+              textColor: Colors.white,
+              child: Text("Create"),
+              onPressed: _submitForm,
+            )
+          ],
+        ),
       ),
     );
   }
 
   void _submitForm() {
+    _formKey.currentState.save();
     final Map<String, dynamic> product = {
       'title': _titleValue,
       'description': _descriptionValue,
@@ -55,43 +61,49 @@ class _ProductCreatePageState extends State<ProductsCreatePage> {
     Navigator.pushReplacementNamed(context, "/products");
   }
 
-  Widget _buildTitleTextField() {
-    return new TextField(
-      decoration: new InputDecoration(labelText: "Product Title"),
-      onChanged: (String value) {
-        setState(
-          () {
-            _titleValue = value;
-          },
-        );
+  TextFormField _buildTitleTextFormField() {
+    return TextFormField(
+      decoration: InputDecoration(labelText: "Product Title"),
+      onSaved: (String value) {
+        setState(() {
+          _titleValue = value;
+        });
+      },
+      validator: (String value) {
+//        if (value.trim().length <= 0)
+        if (value.isEmpty) {
+          return 'Title is required';
+        }
       },
     );
   }
 
-  Widget _buildDescriptionTextField() {
-    return new TextField(
-      decoration: new InputDecoration(labelText: "Product Description"),
+  TextFormField _buildDescriptionTextFormField() {
+    return TextFormField(
+      decoration: InputDecoration(labelText: "Product Description"),
       maxLines: 4,
-      onChanged: (String value) {
-        setState(
-          () {
-            _descriptionValue = value;
-          },
-        );
+      onSaved: (String value) {
+        _descriptionValue = value;
+      },
+      validator: (String value) {
+        if (value.isEmpty) {
+          return 'Description is required';
+        }
       },
     );
   }
 
-  Widget _buildPriceTextField() {
-    return new TextField(
-      decoration: new InputDecoration(labelText: "Product Price"),
+  TextFormField _buildPriceTextFormField() {
+    return TextFormField(
+      decoration: InputDecoration(labelText: "Product Price"),
       keyboardType: TextInputType.number,
-      onChanged: (String value) {
-        setState(
-          () {
-            _priceValue = double.parse(value);
-          },
-        );
+      onSaved: (String value) {
+        _priceValue = double.parse(value);
+      },
+      validator: (String value) {
+        if (value.isEmpty || !RegExp(r'^[0-9]*$').hasMatch(value)) {
+          return 'Price is required and should be a number.';
+        }
       },
     );
   }
