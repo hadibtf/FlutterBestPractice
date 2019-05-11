@@ -44,7 +44,6 @@ class _AuthPageState extends State<AuthPage> {
                     children: <Widget>[
                       new Expanded(
                         child: new RaisedButton(
-                          color: Theme.of(context).primaryColor,
                           textColor: Colors.white,
                           child: new Text('LOGIN'),
                           onPressed: _submitForm,

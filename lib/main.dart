@@ -25,8 +25,11 @@ class _MyAppState extends State<MyApp> {
     return new MaterialApp(
       theme: new ThemeData(
         brightness: Brightness.light,
-        accentColor: Colors.purple,
-        primarySwatch: Colors.deepOrange,
+        accentColor: Colors.red,
+        primarySwatch: Colors.blue,
+        buttonTheme: ButtonThemeData(
+          buttonColor: Colors.red,
+        ),
       ),
 //      home: new AuthPage(),
       routes: {

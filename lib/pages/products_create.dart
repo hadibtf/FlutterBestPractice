@@ -35,7 +35,6 @@ class _ProductCreatePageState extends State<ProductsCreatePage> {
             height: 10.0,
           ),
           new RaisedButton(
-            color: Theme.of(context).accentColor,
             textColor: Colors.white,
             child: new Text("Create"),
             onPressed: _submitForm,
