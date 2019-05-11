@@ -20,30 +20,36 @@ class _ProductCreatePageState extends State<ProductsCreatePage> {
 
   @override
   Widget build(BuildContext context) {
-    final double deviceWidth = MediaQuery.of(context).size.width;
+    final double deviceWidth = MediaQuery
+        .of(context)
+        .size
+        .width;
     final double targetWidth = deviceWidth > 550.0 ? 500.0 : deviceWidth * 0.95;
     final double targetPadding = deviceWidth - targetWidth;
 
-    return Container(
-      width: targetWidth,
-      margin: EdgeInsets.all(10.0),
-      child: Form(
-        key: _formKey,
-        child: ListView(
-          padding: EdgeInsets.symmetric(horizontal: targetPadding / 2),
-          children: <Widget>[
-            _buildTitleTextFormField(),
-            _buildDescriptionTextFormField(),
-            _buildPriceTextFormField(),
-            SizedBox(
-              height: 10.0,
-            ),
-            RaisedButton(
-              textColor: Colors.white,
-              child: Text("Create"),
-              onPressed: _submitForm,
-            )
-          ],
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
+      child: Container(
+        width: targetWidth,
+        margin: EdgeInsets.all(10.0),
+        child: Form(
+          key: _formKey,
+          child: ListView(
+            padding: EdgeInsets.symmetric(horizontal: targetPadding / 2),
+            children: <Widget>[
+              _buildTitleTextFormField(),
+              _buildDescriptionTextFormField(),
+              _buildPriceTextFormField(),
+              SizedBox(
+                height: 10.0,
+              ),
+              RaisedButton(
+                textColor: Colors.white,
+                child: Text("Create"),
+                onPressed: _submitForm,
+              )
+            ],
+          ),
         ),
       ),
     );

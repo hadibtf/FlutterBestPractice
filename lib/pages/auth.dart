@@ -17,35 +17,31 @@ class _AuthPageState extends State<AuthPage> {
     final double deviceWidth = MediaQuery.of(context).size.width;
     final double targetWidth = deviceWidth > 768.0 ? 500.0 : deviceWidth * 0.95;
 
-    return new Scaffold(
-      appBar: new AppBar(
-        title: new Text('Login'),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Login'),
       ),
-      body: new Container(
+      body: Container(
         decoration: BoxDecoration(
           image: _buildBackgroundImage(),
         ),
-        child: new Center(
-          child: new SingleChildScrollView(
+        child: Center(
+          child: SingleChildScrollView(
             child: Container(
               width: targetWidth,
-              child: new Column(
+              child: Column(
                 children: <Widget>[
                   _buildEmailTextField(),
-                  new SizedBox(
-                    height: 10.0,
-                  ),
+                  SizedBox(height: 10.0),
                   _buildPasswordTextField(),
                   _buildAcceptSwitch(),
-                  new SizedBox(
-                    height: 10.0,
-                  ),
-                  new Row(
+                  SizedBox(height: 10.0),
+                  Row(
                     children: <Widget>[
-                      new Expanded(
-                        child: new RaisedButton(
+                      Expanded(
+                        child: RaisedButton(
                           textColor: Colors.white,
-                          child: new Text('LOGIN'),
+                          child: Text('LOGIN'),
                           onPressed: _submitForm,
                         ),
                       )
@@ -61,17 +57,17 @@ class _AuthPageState extends State<AuthPage> {
   }
 
   DecorationImage _buildBackgroundImage() {
-    return new DecorationImage(
+    return DecorationImage(
       fit: BoxFit.cover,
       colorFilter:
           ColorFilter.mode(Colors.black.withOpacity(0.3), BlendMode.dstATop),
-      image: new AssetImage('images/background.jpg'),
+      image: AssetImage('images/background.jpg'),
     );
   }
 
   TextField _buildEmailTextField() {
-    return new TextField(
-      decoration: new InputDecoration(
+    return TextField(
+      decoration: InputDecoration(
         labelText: 'E-Mail',
         filled: true,
         fillColor: Colors.white.withOpacity(0.6),
@@ -86,8 +82,8 @@ class _AuthPageState extends State<AuthPage> {
   }
 
   TextField _buildPasswordTextField() {
-    return new TextField(
-      decoration: new InputDecoration(
+    return TextField(
+      decoration: InputDecoration(
         labelText: 'Password',
         filled: true,
         fillColor: Colors.white.withOpacity(0.6),
@@ -102,14 +98,14 @@ class _AuthPageState extends State<AuthPage> {
   }
 
   SwitchListTile _buildAcceptSwitch() {
-    return new SwitchListTile(
+    return SwitchListTile(
       value: _acceptTerms,
       onChanged: (bool value) {
         setState(() {
           _acceptTerms = value;
         });
       },
-      title: new Text("Accept Terms"),
+      title: Text("Accept Terms"),
     );
   }
 
