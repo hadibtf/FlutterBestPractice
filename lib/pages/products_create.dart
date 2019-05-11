@@ -101,8 +101,8 @@ class _ProductCreatePageState extends State<ProductsCreatePage> {
         _priceValue = double.parse(value);
       },
       validator: (String value) {
-        if (value.isEmpty || !RegExp(r'^[0-9]*$').hasMatch(value)) {
-          return 'Price is required and should be a number.';
+        if (value.isEmpty) {
+          return 'Price is required.';
         }
       },
     );
