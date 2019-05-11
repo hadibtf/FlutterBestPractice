@@ -14,6 +14,9 @@ class _AuthPageState extends State<AuthPage> {
 
   @override
   Widget build(BuildContext context) {
+    final double deviceWidth = MediaQuery.of(context).size.width;
+    final double targetWidth = deviceWidth > 768.0 ? 500.0 : deviceWidth * 0.95;
+
     return new Scaffold(
       appBar: new AppBar(
         title: new Text('Login'),
@@ -22,33 +25,35 @@ class _AuthPageState extends State<AuthPage> {
         decoration: BoxDecoration(
           image: _buildBackgroundImage(),
         ),
-        padding: new EdgeInsets.all(10.0),
         child: new Center(
           child: new SingleChildScrollView(
-            child: new Column(
-              children: <Widget>[
-                _buildEmailTextField(),
-                new SizedBox(
-                  height: 10.0,
-                ),
-                _buildPasswordTextField(),
-                _buildAcceptSwich(),
-                new SizedBox(
-                  height: 10.0,
-                ),
-                new Row(
-                  children: <Widget>[
-                    new Expanded(
-                      child: new RaisedButton(
-                        color: Theme.of(context).primaryColor,
-                        textColor: Colors.white,
-                        child: new Text('LOGIN'),
-                        onPressed: _submitForm,
-                      ),
-                    )
-                  ],
-                ),
-              ],
+            child: Container(
+              width: targetWidth,
+              child: new Column(
+                children: <Widget>[
+                  _buildEmailTextField(),
+                  new SizedBox(
+                    height: 10.0,
+                  ),
+                  _buildPasswordTextField(),
+                  _buildAcceptSwitch(),
+                  new SizedBox(
+                    height: 10.0,
+                  ),
+                  new Row(
+                    children: <Widget>[
+                      new Expanded(
+                        child: new RaisedButton(
+                          color: Theme.of(context).primaryColor,
+                          textColor: Colors.white,
+                          child: new Text('LOGIN'),
+                          onPressed: _submitForm,
+                        ),
+                      )
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -65,7 +70,7 @@ class _AuthPageState extends State<AuthPage> {
     );
   }
 
-  Widget _buildEmailTextField() {
+  TextField _buildEmailTextField() {
     return new TextField(
       decoration: new InputDecoration(
         labelText: 'E-Mail',
@@ -81,7 +86,7 @@ class _AuthPageState extends State<AuthPage> {
     );
   }
 
-  Widget _buildPasswordTextField() {
+  TextField _buildPasswordTextField() {
     return new TextField(
       decoration: new InputDecoration(
         labelText: 'Password',
@@ -97,7 +102,7 @@ class _AuthPageState extends State<AuthPage> {
     );
   }
 
-  Widget _buildAcceptSwich() {
+  SwitchListTile _buildAcceptSwitch() {
     return new SwitchListTile(
       value: _acceptTerms,
       onChanged: (bool value) {

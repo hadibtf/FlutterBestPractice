@@ -16,45 +16,53 @@ class ProductCard extends StatelessWidget {
       child: new Column(
         children: <Widget>[
           new Image.asset(product['image']),
-          new Container(
-            padding: EdgeInsets.only(top: 10.0),
-            child: new Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                new TitleDefault(
-                  title: product['title'],
-                ),
-                new SizedBox(width: 8.0),
-                new PriceTag(
-                  price: product['price'].toString(),
-                ),
-              ],
-            ),
-          ),
+          _buildTitlePriceContainer(),
           new AddressTag(
             address: 'Tabriz, Parvaz',
           ),
-          new ButtonBar(
-            alignment: MainAxisAlignment.center,
-            children: <Widget>[
-              new IconButton(
-                onPressed: () => Navigator.pushNamed<bool>(
-                    context, "/product/$productIndex"),
-                icon: Icon(
-                  Icons.info,
-                  color: Theme.of(context).accentColor,
-                ),
-              ),
-              new IconButton(
-                onPressed: () => Navigator.pushNamed<bool>(
-                    context, "/product/$productIndex"),
-                color: Colors.red,
-                icon: new Icon(Icons.favorite_border),
-              ),
-            ],
-          ),
+          _buildActionButtonsButtonBar(context),
         ],
       ),
     );
+  }
+
+  ButtonBar _buildActionButtonsButtonBar(BuildContext context) {
+    return new ButtonBar(
+          alignment: MainAxisAlignment.center,
+          children: <Widget>[
+            new IconButton(
+              onPressed: () => Navigator.pushNamed<bool>(
+                  context, "/product/$productIndex"),
+              icon: Icon(
+                Icons.info,
+                color: Theme.of(context).accentColor,
+              ),
+            ),
+            new IconButton(
+              onPressed: () => Navigator.pushNamed<bool>(
+                  context, "/product/$productIndex"),
+              color: Colors.red,
+              icon: new Icon(Icons.favorite_border),
+            ),
+          ],
+        );
+  }
+
+  Container _buildTitlePriceContainer() {
+    return new Container(
+          padding: EdgeInsets.only(top: 10.0),
+          child: new Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              new TitleDefault(
+                title: product['title'],
+              ),
+              new SizedBox(width: 8.0),
+              new PriceTag(
+                price: product['price'].toString(),
+              ),
+            ],
+          ),
+        );
   }
 }
