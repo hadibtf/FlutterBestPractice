@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 import './pages/auth.dart';
 import './pages/product.dart';
+import './pages/product_admin.dart';
 import './pages/products.dart';
-import './pages/products_admin.dart';
 
 void main() {
 //  debugPaintSizeEnabled = true;
@@ -37,8 +37,10 @@ class _MyAppState extends State<MyApp> {
         "/products": (BuildContext context) =>
             new ProductsPage(products: _products),
         "/admin": (BuildContext context) => new ProductsAdminPage(
+              updateProduct: _updateProduct,
               addProduct: _addProduct,
               deleteProduct: _deleteProduct,
+              products: _products,
             ),
       },
       onGenerateRoute: (RouteSettings settings) {
@@ -72,6 +74,12 @@ class _MyAppState extends State<MyApp> {
   void _addProduct(Map<String, dynamic> product) {
     setState(() {
       _products.add(product);
+    });
+  }
+
+  void _updateProduct(Map<String, dynamic> product, int index) {
+    setState(() {
+      _products[index] = product;
     });
   }
 

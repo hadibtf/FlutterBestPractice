@@ -1,23 +1,26 @@
 import 'package:flutter/material.dart';
 
-import './products_create.dart';
+import './product_edit.dart';
 import './products_list.dart';
 import '../widgets/ui_elements/side_drawer.dart';
 
 class ProductsAdminPage extends StatelessWidget {
   final Function addProduct;
   final Function deleteProduct;
+  final Function updateProduct;
+  final List<Map<String, dynamic>> products;
 
-  ProductsAdminPage({this.addProduct, this.deleteProduct});
+  ProductsAdminPage(
+      {this.addProduct, this.deleteProduct, this.products, this.updateProduct});
 
   @override
   Widget build(BuildContext context) {
-    return new DefaultTabController(
+    return DefaultTabController(
       length: 2,
-      child: new Scaffold(
+      child: Scaffold(
         drawer: _buildSideDrawer(context),
-        appBar: new AppBar(
-          title: new Text('Manage Products'),
+        appBar: AppBar(
+          title: Text('Manage Products'),
           bottom: _buildTabBar(),
         ),
         body: _buildTabBarView(),
@@ -26,31 +29,34 @@ class ProductsAdminPage extends StatelessWidget {
   }
 
   TabBarView _buildTabBarView() {
-    return new TabBarView(
+    return TabBarView(
       children: <Widget>[
-        new ProductsCreatePage(
+        ProductsEditPage(
           addProduct: addProduct,
         ),
-        new ProductListPage(),
+        ProductListPage(
+          products: products,
+          updateProduct: updateProduct,
+        ),
       ],
     );
   }
 
   TabBar _buildTabBar() {
-    return new TabBar(tabs: <Widget>[
-      new Tab(
-        icon: new Icon(Icons.list),
+    return TabBar(tabs: <Widget>[
+      Tab(
+        icon: Icon(Icons.list),
         text: "My Product",
       ),
-      new Tab(
-        icon: new Icon(Icons.create),
+      Tab(
+        icon: Icon(Icons.create),
         text: "Create Products",
       ),
     ]);
   }
 
   Widget _buildSideDrawer(BuildContext context) {
-    return new SideDrawer(
+    return SideDrawer(
       drawerTitleText: 'Choose',
       listTileText: 'All products',
       listTileIcon: Icons.shop,
