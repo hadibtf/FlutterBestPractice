@@ -5,8 +5,9 @@ import '../pages/product_edit.dart';
 class ProductListPage extends StatelessWidget {
   final List<Map<String, dynamic>> products;
   final Function updateProduct;
+  final Function deleteProduct;
 
-  ProductListPage({this.products, this.updateProduct});
+  ProductListPage({this.products, this.updateProduct, this.deleteProduct});
 
   @override
   Widget build(BuildContext context) {
@@ -16,8 +17,12 @@ class ProductListPage extends StatelessWidget {
 
     return ListView.builder(
       itemBuilder: (BuildContext context, int index) {
-        return Dismissible(
-            onDismissed:,
+        return Dismissible (
+            onDismissed: (DismissDirection direction) {
+              if (direction == DismissDirection.startToEnd || direction == DismissDirection.endToStart) {
+                deleteProduct(index);
+              }
+            },
             background: Container(
               color: Colors.red,
               child: Row(
@@ -68,33 +73,37 @@ class ProductListPage extends StatelessWidget {
                   ),
                   title: Text(products[index]['title']),
                   subtitle: Text('\$${products[index]['price']}'),
-                  trailing: IconButton(
-                    icon: Icon(Icons.edit),
-                    onPressed: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (BuildContext context) {
-                            return Scaffold(
-                              appBar: AppBar(
-                                title: Text('Edit Product'),
-                              ),
-                              body: ProductsEditPage(
-                                product: products[index],
-                                updateProduct: updateProduct,
-                                productIndex: index,
-                              ),
-                            );
-                          },
-                        ),
-                      );
-                    },
-                  ),
+                  trailing: _buildEditIconButton(context, index),
                 ),
                 Divider()
               ],
             ));
       },
       itemCount: products.length,
+    );
+  }
+
+  IconButton _buildEditIconButton(BuildContext context, int index) {
+    return IconButton(
+      icon: Icon(Icons.edit),
+      onPressed: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (BuildContext context) {
+              return Scaffold(
+                appBar: AppBar(
+                  title: Text('Edit Product'),
+                ),
+                body: ProductsEditPage(
+                  product: products[index],
+                  updateProduct: updateProduct,
+                  productIndex: index,
+                ),
+              );
+            },
+          ),
+        );
+      },
     );
   }
 }

@@ -10,8 +10,7 @@ class ProductsAdminPage extends StatelessWidget {
   final Function updateProduct;
   final List<Map<String, dynamic>> products;
 
-  ProductsAdminPage(
-      {this.addProduct, this.deleteProduct, this.products, this.updateProduct});
+  ProductsAdminPage({this.addProduct, this.deleteProduct, this.products, this.updateProduct});
 
   @override
   Widget build(BuildContext context) {
@@ -37,6 +36,7 @@ class ProductsAdminPage extends StatelessWidget {
         ProductListPage(
           products: products,
           updateProduct: updateProduct,
+          deleteProduct: deleteProduct,
         ),
       ],
     );
