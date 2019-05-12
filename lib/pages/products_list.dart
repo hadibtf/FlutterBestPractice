@@ -19,6 +19,7 @@ class ProductListPage extends StatelessWidget {
                 backgroundImage: AssetImage(products[index]['image']),
               ),
               title: Text(products[index]['title']),
+              subtitle: Text('\$${products[index]['price']}'),
               trailing: IconButton(
                 icon: Icon(Icons.edit),
                 onPressed: () {
@@ -41,6 +42,7 @@ class ProductListPage extends StatelessWidget {
                 },
               ),
             ),
+
           ],
         );
       },
