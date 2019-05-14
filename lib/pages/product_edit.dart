@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 
+import '../models/product.dart';
+
 class ProductsEditPage extends StatefulWidget {
   final Function addProduct;
   final Function updateProduct;
-  final Map<String, dynamic> product;
+  final Product product;
   final int productIndex;
 
   ProductsEditPage(
@@ -27,10 +29,13 @@ class _ProductEditPageState extends State<ProductsEditPage> {
 
   @override
   Widget build(BuildContext context) {
+    return _buildPageContent(context);
+  }
+
+  GestureDetector _buildPageContent(BuildContext context) {
     final double deviceWidth = MediaQuery.of(context).size.width;
     final double targetWidth = deviceWidth > 550.0 ? 500.0 : deviceWidth * 0.95;
     final double targetPadding = deviceWidth - targetWidth;
-
     return GestureDetector(
       onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
       child: Container(
@@ -63,15 +68,23 @@ class _ProductEditPageState extends State<ProductsEditPage> {
     if (!_formKey.currentState.validate()) return;
     _formKey.currentState.save();
     if (widget.product == null)
-      widget.addProduct(_formData);
+      widget.addProduct(Product(
+          description: _formData['description'],
+          price: _formData['price'],
+          image: _formData['image'],
+          title: _formData['title']));
     else
-      widget.updateProduct(_formData, widget.productIndex);
+      widget.updateProduct(Product(
+          description: _formData['description'],
+          price: _formData['price'],
+          image: _formData['image'],
+          title: _formData['title']), widget.productIndex);
     Navigator.pushReplacementNamed(context, "/products");
   }
 
   TextFormField _buildTitleTextFormField() {
     return TextFormField(
-      initialValue: widget.product == null ? '' : widget.product['title'],
+      initialValue: widget.product == null ? '' : widget.product.title,
       decoration: InputDecoration(labelText: "Product Title"),
       onSaved: (String value) {
         _formData['title'] = value;
@@ -87,7 +100,7 @@ class _ProductEditPageState extends State<ProductsEditPage> {
 
   TextFormField _buildDescriptionTextFormField() {
     return TextFormField(
-      initialValue: widget.product == null ? '' : widget.product['description'],
+      initialValue: widget.product == null ? '' : widget.product.description,
       decoration: InputDecoration(labelText: "Product Description"),
       maxLines: 4,
       onSaved: (String value) {
@@ -104,7 +117,7 @@ class _ProductEditPageState extends State<ProductsEditPage> {
   TextFormField _buildPriceTextFormField() {
     return TextFormField(
       initialValue:
-          widget.product == null ? '' : widget.product['price'].toString(),
+          widget.product == null ? '' : widget.product.price.toString(),
       decoration: InputDecoration(labelText: "Product Price"),
       keyboardType: TextInputType.number,
       onSaved: (String value) {

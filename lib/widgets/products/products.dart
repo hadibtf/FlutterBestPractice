@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 
 import './products_card.dart';
+import '../../models/product.dart';
 
 class Products extends StatelessWidget {
-  final List<Map<String, dynamic>> products;
+  final List<Product> products;
   final Function deleteProduct;
 
   Products({this.products = const [], this.deleteProduct});

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import './models/product.dart';
 import './pages/auth.dart';
 import './pages/product.dart';
 import './pages/product_admin.dart';
@@ -18,17 +19,17 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  List<Map<String, dynamic>> _products = [];
+  List<Product> _products = [];
 
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
       theme: new ThemeData(
         brightness: Brightness.light,
-        accentColor: Colors.red,
-        primarySwatch: Colors.blue,
+        accentColor: Color(0xFF000042),
+        primaryColor: Color(0xFFAA1428),
         buttonTheme: ButtonThemeData(
-          buttonColor: Colors.red,
+          buttonColor: Color(0xFF000042),
         ),
       ),
 //      home: new AuthPage(),
@@ -52,10 +53,10 @@ class _MyAppState extends State<MyApp> {
           final int index = int.parse(pathElements[2]);
           return new MaterialPageRoute<bool>(
             builder: (BuildContext context) => new ProductPage(
-                  title: _products[index]['title'],
-                  imageUrl: _products[index]['image'],
-                  price: _products[index]['price'],
-                  description: _products[index]['description'],
+                  title: _products[index].title,
+                  imageUrl: _products[index].image,
+                  price: _products[index].price,
+                  description: _products[index].description,
                 ),
           );
         }
@@ -71,13 +72,13 @@ class _MyAppState extends State<MyApp> {
     );
   }
 
-  void _addProduct(Map<String, dynamic> product) {
+  void _addProduct(Product product) {
     setState(() {
       _products.add(product);
     });
   }
 
-  void _updateProduct(Map<String, dynamic> product, int index) {
+  void _updateProduct(Product product, int index) {
     setState(() {
       _products[index] = product;
     });

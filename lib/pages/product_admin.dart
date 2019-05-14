@@ -3,14 +3,20 @@ import 'package:flutter/material.dart';
 import './product_edit.dart';
 import './products_list.dart';
 import '../widgets/ui_elements/side_drawer.dart';
+import '../models/product.dart';
 
 class ProductsAdminPage extends StatelessWidget {
   final Function addProduct;
   final Function deleteProduct;
   final Function updateProduct;
-  final List<Map<String, dynamic>> products;
+  final List<Product> products;
 
-  ProductsAdminPage({this.addProduct, this.deleteProduct, this.products, this.updateProduct});
+  ProductsAdminPage({
+    this.addProduct,
+    this.deleteProduct,
+    this.products,
+    this.updateProduct
+  });
 
   @override
   Widget build(BuildContext context) {

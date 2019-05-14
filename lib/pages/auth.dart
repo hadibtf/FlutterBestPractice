@@ -63,19 +63,22 @@ class _AuthPageState extends State<AuthPage> {
 
   DecorationImage _buildBackgroundImage() {
     return DecorationImage(
-      fit: BoxFit.cover,
-      colorFilter:
-          ColorFilter.mode(Colors.black.withOpacity(0.3), BlendMode.dstATop),
-      image: AssetImage('images/background.jpg'),
+      fit: BoxFit.contain,
+      colorFilter: ColorFilter.mode(
+        Colors.black.withOpacity(0.3),
+        BlendMode.dstATop,
+      ),
+      image: AssetImage('images/avengers.jpg'),
     );
   }
 
   TextFormField _buildEmailTextField() {
     return TextFormField(
+      style: TextStyle(color: Colors.black),
       decoration: InputDecoration(
         labelText: 'E-Mail',
         filled: true,
-        fillColor: Colors.white.withOpacity(0.6),
+        fillColor: Colors.black.withOpacity(0.2),
       ),
       keyboardType: TextInputType.emailAddress,
       onSaved: (String value) {
@@ -93,10 +96,11 @@ class _AuthPageState extends State<AuthPage> {
 
   TextFormField _buildPasswordTextField() {
     return TextFormField(
+      style: TextStyle(color: Colors.black),
       decoration: InputDecoration(
         labelText: 'Password',
         filled: true,
-        fillColor: Colors.white.withOpacity(0.6),
+        fillColor: Colors.black.withOpacity(0.2),
       ),
       obscureText: true,
       onSaved: (String value) {
@@ -123,7 +127,7 @@ class _AuthPageState extends State<AuthPage> {
   }
 
   void _submitForm() {
-    if (!_formKey.currentState.validate()) return;
+//    if (!_formKey.currentState.validate()) return;
     _formKey.currentState.save();
 
     print(_emailValue);
