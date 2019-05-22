@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:scoped_model/scoped_model.dart';
+
+import '../scoped_models/main.dart';
 
 class AuthPage extends StatefulWidget {
   @override
@@ -8,9 +11,12 @@ class AuthPage extends StatefulWidget {
 }
 
 class _AuthPageState extends State<AuthPage> {
-  String _emailValue;
-  String _passwordValue;
-  bool _acceptTerms = false;
+  final Map<String, dynamic> _formData = {
+    'email': null,
+    'password': null,
+    'acceptTerms': false
+  };
+
 
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
@@ -43,11 +49,15 @@ class _AuthPageState extends State<AuthPage> {
                     Row(
                       children: <Widget>[
                         Expanded(
-                          child: RaisedButton(
-                            textColor: Colors.white,
-                            child: Text('LOGIN'),
-                            onPressed: _submitForm,
-                          ),
+                          child: ScopedModelDescendant<MainModel>(builder:
+                              (BuildContext context, Widget child,
+                                  MainModel model) {
+                            return RaisedButton(
+                              textColor: Colors.white,
+                              child: Text('LOGIN'),
+                              onPressed: () => _submitForm(model.login),
+                            );
+                          }),
                         )
                       ],
                     ),
@@ -82,7 +92,7 @@ class _AuthPageState extends State<AuthPage> {
       ),
       keyboardType: TextInputType.emailAddress,
       onSaved: (String value) {
-        _emailValue = value;
+        _formData['email'] = value;
       },
       validator: (String value) {
         String _regExpEmail =
@@ -104,7 +114,7 @@ class _AuthPageState extends State<AuthPage> {
       ),
       obscureText: true,
       onSaved: (String value) {
-        _passwordValue = value;
+        _formData['password'] = value;
       },
       validator: (String value) {
         if (value.isEmpty || value.length < 6) {
@@ -116,22 +126,20 @@ class _AuthPageState extends State<AuthPage> {
 
   SwitchListTile _buildAcceptSwitch() {
     return SwitchListTile(
-      value: _acceptTerms,
+      value: _formData['acceptTerms'],
       onChanged: (bool value) {
         setState(() {
-          _acceptTerms = value;
+          _formData['acceptTerms'] = value;
         });
       },
       title: Text("Accept Terms"),
     );
   }
 
-  void _submitForm() {
+  void _submitForm(Function login) {
 //    if (!_formKey.currentState.validate()) return;
     _formKey.currentState.save();
-
-    print(_emailValue);
-    print(_passwordValue);
+    login(_formData['email'], _formData['password']);
     Navigator.pushReplacementNamed(context, '/products');
   }
 }

@@ -1,16 +1,10 @@
 import 'package:flutter/material.dart';
 
+import 'package:scoped_model/scoped_model.dart';
+import '../scoped_models/main.dart';
 import '../models/product.dart';
 
 class ProductsEditPage extends StatefulWidget {
-  final Function addProduct;
-  final Function updateProduct;
-  final Product product;
-  final int productIndex;
-
-  ProductsEditPage(
-      {this.addProduct, this.product, this.updateProduct, this.productIndex});
-
   @override
   State<StatefulWidget> createState() {
     return _ProductEditPageState();
@@ -29,10 +23,48 @@ class _ProductEditPageState extends State<ProductsEditPage> {
 
   @override
   Widget build(BuildContext context) {
-    return _buildPageContent(context);
+    return ScopedModelDescendant<MainModel>(
+      builder: (BuildContext context, Widget child, MainModel model) {
+        final Widget pageContent =
+            _buildPageContent(context, model.selectedProduct);
+        return model.selectedProductIndex == null
+            ? pageContent
+            : Scaffold(
+                appBar: AppBar(
+                  title: Text('Edit Product'),
+                  leading: IconButton(
+                    color: Colors.white,
+                    icon: Icon(Icons.arrow_back),
+                    onPressed: () {
+                      Navigator.pop(context, true);
+                      model.deleteProduct();
+                    },
+                  ),
+                ),
+                body: pageContent,
+              );
+      },
+    );
   }
 
-  GestureDetector _buildPageContent(BuildContext context) {
+  Widget _buildSubmitButton() {
+    return ScopedModelDescendant<MainModel>(
+      builder: (BuildContext context, Widget child, MainModel model) {
+        return RaisedButton(
+          textColor: Colors.white,
+          child: Text("Save"),
+          onPressed: () => _submitForm(
+                model.addProduct,
+                model.updateProduct,
+                model.selectProduct,
+                model.selectedProductIndex,
+              ),
+        );
+      },
+    );
+  }
+
+  GestureDetector _buildPageContent(BuildContext context, Product product) {
     final double deviceWidth = MediaQuery.of(context).size.width;
     final double targetWidth = deviceWidth > 550.0 ? 500.0 : deviceWidth * 0.95;
     final double targetPadding = deviceWidth - targetWidth;
@@ -46,17 +78,11 @@ class _ProductEditPageState extends State<ProductsEditPage> {
           child: ListView(
             padding: EdgeInsets.symmetric(horizontal: targetPadding / 2),
             children: <Widget>[
-              _buildTitleTextFormField(),
-              _buildDescriptionTextFormField(),
-              _buildPriceTextFormField(),
-              SizedBox(
-                height: 10.0,
-              ),
-              RaisedButton(
-                textColor: Colors.white,
-                child: Text("Save"),
-                onPressed: _submitForm,
-              )
+              _buildTitleTextFormField(product),
+              _buildDescriptionTextFormField(product),
+              _buildPriceTextFormField(product),
+              SizedBox(height: 10.0),
+              _buildSubmitButton()
             ],
           ),
         ),
@@ -64,27 +90,30 @@ class _ProductEditPageState extends State<ProductsEditPage> {
     );
   }
 
-  void _submitForm() {
+  void _submitForm(Function addProduct, Function updateProduct,Function setSelectedProduct,
+      [int selectedProductIndex]) {
     if (!_formKey.currentState.validate()) return;
     _formKey.currentState.save();
-    if (widget.product == null)
-      widget.addProduct(Product(
-          description: _formData['description'],
-          price: _formData['price'],
-          image: _formData['image'],
-          title: _formData['title']));
+    if (selectedProductIndex == null)
+      addProduct(
+        _formData['title'],
+        _formData['description'],
+        _formData['image'],
+        _formData['price'],
+      );
     else
-      widget.updateProduct(Product(
-          description: _formData['description'],
-          price: _formData['price'],
-          image: _formData['image'],
-          title: _formData['title']), widget.productIndex);
-    Navigator.pushReplacementNamed(context, "/products");
+      updateProduct(
+        _formData['title'],
+        _formData['description'],
+        _formData['image'],
+        _formData['price'],
+      );
+    Navigator.pushReplacementNamed(context, "/products").then((_)=>setSelectedProduct(null));
   }
 
-  TextFormField _buildTitleTextFormField() {
+  TextFormField _buildTitleTextFormField(Product product) {
     return TextFormField(
-      initialValue: widget.product == null ? '' : widget.product.title,
+      initialValue: product == null ? '' : product.title,
       decoration: InputDecoration(labelText: "Product Title"),
       onSaved: (String value) {
         _formData['title'] = value;
@@ -98,9 +127,9 @@ class _ProductEditPageState extends State<ProductsEditPage> {
     );
   }
 
-  TextFormField _buildDescriptionTextFormField() {
+  TextFormField _buildDescriptionTextFormField(Product product) {
     return TextFormField(
-      initialValue: widget.product == null ? '' : widget.product.description,
+      initialValue: product == null ? '' : product.description,
       decoration: InputDecoration(labelText: "Product Description"),
       maxLines: 4,
       onSaved: (String value) {
@@ -114,10 +143,9 @@ class _ProductEditPageState extends State<ProductsEditPage> {
     );
   }
 
-  TextFormField _buildPriceTextFormField() {
+  TextFormField _buildPriceTextFormField(Product product) {
     return TextFormField(
-      initialValue:
-          widget.product == null ? '' : widget.product.price.toString(),
+      initialValue: product == null ? '' : product.price.toString(),
       decoration: InputDecoration(labelText: "Product Price"),
       keyboardType: TextInputType.number,
       onSaved: (String value) {

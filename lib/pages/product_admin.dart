@@ -12,10 +12,10 @@ class ProductsAdminPage extends StatelessWidget {
   final List<Product> products;
 
   ProductsAdminPage({
-    this.addProduct,
-    this.deleteProduct,
-    this.products,
-    this.updateProduct
+        this.addProduct,
+        this.deleteProduct,
+        this.products,
+        this.updateProduct
   });
 
   @override
@@ -36,14 +36,8 @@ class ProductsAdminPage extends StatelessWidget {
   TabBarView _buildTabBarView() {
     return TabBarView(
       children: <Widget>[
-        ProductsEditPage(
-          addProduct: addProduct,
-        ),
-        ProductListPage(
-          products: products,
-          updateProduct: updateProduct,
-          deleteProduct: deleteProduct,
-        ),
+        ProductsEditPage(),
+        ProductListPage(),
       ],
     );
   }
@@ -51,12 +45,12 @@ class ProductsAdminPage extends StatelessWidget {
   TabBar _buildTabBar() {
     return TabBar(tabs: <Widget>[
       Tab(
-        icon: Icon(Icons.list),
-        text: "My Product",
-      ),
-      Tab(
         icon: Icon(Icons.create),
         text: "Create Products",
+      ),
+      Tab(
+        icon: Icon(Icons.list),
+        text: "My Product",
       ),
     ]);
   }

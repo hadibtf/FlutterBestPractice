@@ -1,16 +1,17 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:scoped_model/scoped_model.dart';
+
+import '../scoped_models/main.dart';
+import '../models/product.dart';
 
 import '../widgets/ui_elements/title_default.dart';
 
 class ProductPage extends StatelessWidget {
-  final String title;
-  final String imageUrl;
-  final String description;
-  final double price;
+  final int productIndex;
 
-  ProductPage({this.title, this.imageUrl, this.description, this.price});
+  ProductPage({Key key, this.productIndex});
 
   @override
   Widget build(BuildContext context) {
@@ -19,50 +20,55 @@ class ProductPage extends StatelessWidget {
         Navigator.pop(context, false);
         return Future.value(false);
       },
-      child: new Scaffold(
-        appBar: new AppBar(
-          title: new Text(title),
-        ),
-        body: new Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            new Image.asset(imageUrl),
-            new Container(
-              padding: new EdgeInsets.all(10.0),
-              child: new TitleDefault(
-                title: title,
-              ),
+      child: ScopedModelDescendant<MainModel>(
+        builder: (BuildContext context, Widget child, MainModel model) {
+          final Product products = model.allProducts[productIndex];
+          return Scaffold(
+            appBar: AppBar(
+              title:  Text(products.title),
             ),
-            _buildAddressPriceRow(),
-            new Container(
-              padding: new EdgeInsets.all(10.0),
-              child: new Text(
-                description,
-                textAlign: TextAlign.center,
-              ),
+            body:  Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                Image.asset(products.image),
+                Container(
+                  padding:  EdgeInsets.all(10.0),
+                  child:  TitleDefault(
+                    title: products.title,
+                  ),
+                ),
+                _buildAddressPriceRow(products.price.toString()),
+                Container(
+                  padding:  EdgeInsets.all(10.0),
+                  child:  Text(
+                    products.description,
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
 
-  Widget _buildAddressPriceRow() {
-    return new Row(
+  Widget _buildAddressPriceRow(String price) {
+    return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        new Text(
+        Text(
           'Parvaz, Tabriz',
           style: TextStyle(color: Colors.grey),
         ),
-        new Container(
+        Container(
           margin: EdgeInsets.symmetric(horizontal: 5.0),
           child: Text(
             '|',
             style: TextStyle(color: Colors.grey),
           ),
         ),
-        new Text(
+        Text(
           '\$$price',
           style: TextStyle(
             fontFamily: 'OswaldRegular',
@@ -77,17 +83,17 @@ class ProductPage extends StatelessWidget {
 //    showDialog(
 //      context: context,
 //      builder: (BuildContext context) {
-//        return new AlertDialog(
+//        return  AlertDialog(
 //          title: Text("Are you sure?"),
 //          content: Text("This action cannot be undone!"),
 //          actions: <Widget>[
-//            new FlatButton(
+//             FlatButton(
 //              onPressed: () {
 //                Navigator.pop(context);
 //              },
 //              child: Text("DISCARD"),
 //            ),
-//            new FlatButton(
+//            FlatButton(
 //              onPressed: () {
 //                Navigator.pop(context);
 //                Navigator.pop(context, true);

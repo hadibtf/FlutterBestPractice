@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:scoped_model/scoped_model.dart';
+
+import '../../scoped_models/main.dart';
 
 import './address_tag.dart';
 import './price_tag.dart';
@@ -13,14 +16,13 @@ class ProductCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return new Card(
-      child: new Column(
+    return Card(
+      child: Column(
         children: <Widget>[
-          new Image.asset(product.image),
+          Image.asset(product.image),
           _buildTitlePriceContainer(),
-          new AddressTag(
-            address: 'Tabriz, Parvaz',
-          ),
+          AddressTag(address: 'Tabriz, Parvaz'),
+          Text(product.userId),
           _buildActionButtonsButtonBar(context),
         ],
       ),
@@ -28,42 +30,45 @@ class ProductCard extends StatelessWidget {
   }
 
   ButtonBar _buildActionButtonsButtonBar(BuildContext context) {
-    return new ButtonBar(
-          alignment: MainAxisAlignment.center,
-          children: <Widget>[
-            new IconButton(
-              onPressed: () => Navigator.pushNamed<bool>(
-                  context, "/product/$productIndex"),
-              icon: Icon(
-                Icons.info,
-                color: Theme.of(context).accentColor,
-              ),
-            ),
-            new IconButton(
-              onPressed: () => Navigator.pushNamed<bool>(
-                  context, "/product/$productIndex"),
-              color: Colors.red,
-              icon: new Icon(Icons.favorite_border),
-            ),
-          ],
-        );
+    return ButtonBar(
+      alignment: MainAxisAlignment.center,
+      children: <Widget>[
+        IconButton(
+          onPressed: () =>
+              Navigator.pushNamed<bool>(context, "/product/$productIndex"),
+          icon: Icon(
+            Icons.info,
+            color: Theme.of(context).accentColor,
+          ),
+        ),
+        ScopedModelDescendant<MainModel>(
+          builder: (BuildContext context, Widget child, MainModel model) {
+            return IconButton(
+                onPressed: () {
+                  model.selectProduct(productIndex);
+                  model.toggleProductFavoriteStatus();
+                },
+                color: Colors.red,
+                icon: model.allProducts[productIndex].isFavorite
+                    ? Icon(Icons.favorite)
+                    : Icon(Icons.favorite_border));
+          },
+        ),
+      ],
+    );
   }
 
   Container _buildTitlePriceContainer() {
-    return new Container(
-          padding: EdgeInsets.only(top: 10.0),
-          child: new Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              new TitleDefault(
-                title: product.title,
-              ),
-              new SizedBox(width: 8.0),
-              new PriceTag(
-                price: product.price.toString(),
-              ),
-            ],
-          ),
-        );
+    return Container(
+      padding: EdgeInsets.only(top: 10.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          TitleDefault(title: product.title),
+          SizedBox(width: 8.0),
+          PriceTag(price: product.price.toString()),
+        ],
+      ),
+    );
   }
 }
