@@ -17,7 +17,6 @@ class _AuthPageState extends State<AuthPage> {
     'acceptTerms': false
   };
 
-
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
@@ -137,7 +136,7 @@ class _AuthPageState extends State<AuthPage> {
   }
 
   void _submitForm(Function login) {
-//    if (!_formKey.currentState.validate()) return;
+    if (!_formKey.currentState.validate()) return;
     _formKey.currentState.save();
     login(_formData['email'], _formData['password']);
     Navigator.pushReplacementNamed(context, '/products');

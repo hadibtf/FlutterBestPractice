@@ -4,7 +4,22 @@ import 'package:scoped_model/scoped_model.dart';
 import '../pages/product_edit.dart';
 import '../scoped_models/main.dart';
 
-class ProductListPage extends StatelessWidget {
+class ProductListPage extends StatefulWidget {
+  final MainModel model;
+
+  ProductListPage({@required this.model});
+
+  @override
+  State<StatefulWidget> createState() => _ProductListPageState();
+}
+
+class _ProductListPageState extends State<ProductListPage> {
+  @override
+  void initState() {
+    super.initState();
+    widget.model.fetchProducts();
+  }
+
   @override
   Widget build(BuildContext context) {
     final double deviceWidth = MediaQuery.of(context).size.width;
@@ -70,7 +85,7 @@ class ProductListPage extends StatelessWidget {
                   ListTile(
                     leading: CircleAvatar(
                       backgroundImage:
-                          AssetImage(model.allProducts[index].image),
+                          NetworkImage(model.allProducts[index].image),
                     ),
                     title: Text(model.allProducts[index].title),
                     subtitle: Text('\$${model.allProducts[index].price}'),

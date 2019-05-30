@@ -50,16 +50,18 @@ class _ProductEditPageState extends State<ProductsEditPage> {
   Widget _buildSubmitButton() {
     return ScopedModelDescendant<MainModel>(
       builder: (BuildContext context, Widget child, MainModel model) {
-        return RaisedButton(
-          textColor: Colors.white,
-          child: Text("Save"),
-          onPressed: () => _submitForm(
-                model.addProduct,
-                model.updateProduct,
-                model.selectProduct,
-                model.selectedProductIndex,
-              ),
-        );
+        return model.isLoading
+            ? Center(child: CircularProgressIndicator())
+            : RaisedButton(
+                textColor: Colors.white,
+                child: Text("Save"),
+                onPressed: () => _submitForm(
+                      model.addProduct,
+                      model.updateProduct,
+                      model.selectProduct,
+                      model.selectedProductIndex,
+                    ),
+              );
       },
     );
   }
@@ -90,7 +92,8 @@ class _ProductEditPageState extends State<ProductsEditPage> {
     );
   }
 
-  void _submitForm(Function addProduct, Function updateProduct,Function setSelectedProduct,
+  void _submitForm(
+      Function addProduct, Function updateProduct, Function setSelectedProduct,
       [int selectedProductIndex]) {
     if (!_formKey.currentState.validate()) return;
     _formKey.currentState.save();
@@ -100,15 +103,16 @@ class _ProductEditPageState extends State<ProductsEditPage> {
         _formData['description'],
         _formData['image'],
         _formData['price'],
-      );
+      ).then((_) => Navigator.pushReplacementNamed(context, "/products")
+          .then((_) => setSelectedProduct(null)));
     else
       updateProduct(
         _formData['title'],
         _formData['description'],
         _formData['image'],
         _formData['price'],
-      );
-    Navigator.pushReplacementNamed(context, "/products").then((_)=>setSelectedProduct(null));
+      ).then((_) => Navigator.pushReplacementNamed(context, "/products")
+          .then((_) => setSelectedProduct(null)));
   }
 
   TextFormField _buildTitleTextFormField(Product product) {
