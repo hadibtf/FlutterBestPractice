@@ -3,6 +3,8 @@ import 'package:scoped_model/scoped_model.dart';
 
 import '../scoped_models/main.dart';
 
+enum AuthMode { Signup, Login }
+
 class AuthPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
@@ -18,6 +20,9 @@ class _AuthPageState extends State<AuthPage> {
   };
 
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  final TextEditingController _passwordTextController = TextEditingController();
+  AuthMode _authMode = AuthMode.Login;
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +48,23 @@ class _AuthPageState extends State<AuthPage> {
                     _buildEmailTextField(),
                     SizedBox(height: 10.0),
                     _buildPasswordTextField(),
+                    SizedBox(height: 10.0),
+                    _authMode == AuthMode.Signup
+                        ? _buildConfirmPasswordTextField()
+                        : Container(),
                     _buildAcceptSwitch(),
+                    SizedBox(height: 10.0),
+                    FlatButton(
+                      onPressed: () {
+                        setState(() {
+                          _authMode = _authMode == AuthMode.Login
+                              ? AuthMode.Signup
+                              : AuthMode.Login;
+                        });
+                      },
+                      child: Text(
+                          'Switch to ${_authMode == AuthMode.Login ? 'Signup' : 'Login'}'),
+                    ),
                     SizedBox(height: 10.0),
                     Row(
                       children: <Widget>[
@@ -54,7 +75,8 @@ class _AuthPageState extends State<AuthPage> {
                             return RaisedButton(
                               textColor: Colors.white,
                               child: Text('LOGIN'),
-                              onPressed: () => _submitForm(model.login),
+                              onPressed: () =>
+                                  _submitForm(model.login, model.signup),
                             );
                           }),
                         )
@@ -105,6 +127,7 @@ class _AuthPageState extends State<AuthPage> {
 
   TextFormField _buildPasswordTextField() {
     return TextFormField(
+      controller: _passwordTextController,
       style: TextStyle(color: Colors.black),
       decoration: InputDecoration(
         labelText: 'Password',
@@ -123,6 +146,23 @@ class _AuthPageState extends State<AuthPage> {
     );
   }
 
+  TextFormField _buildConfirmPasswordTextField() {
+    return TextFormField(
+      style: TextStyle(color: Colors.black),
+      decoration: InputDecoration(
+        labelText: 'Confirm Password',
+        filled: true,
+        fillColor: Colors.black.withOpacity(0.2),
+      ),
+      obscureText: true,
+      validator: (String value) {
+        if (_passwordTextController.text != value) {
+          return 'Passwords do not match!';
+        }
+      },
+    );
+  }
+
   SwitchListTile _buildAcceptSwitch() {
     return SwitchListTile(
       value: _formData['acceptTerms'],
@@ -135,10 +175,33 @@ class _AuthPageState extends State<AuthPage> {
     );
   }
 
-  void _submitForm(Function login) {
+  void _submitForm(Function login, Function signup) async {
     if (!_formKey.currentState.validate()) return;
     _formKey.currentState.save();
-    login(_formData['email'], _formData['password']);
-    Navigator.pushReplacementNamed(context, '/products');
+    if (_authMode == AuthMode.Login) {
+      login(_formData['email'], _formData['password']);
+    } else {
+      final Map<String, dynamic> successInformation =
+          await signup(_formData['email'], _formData['password']);
+      if (successInformation['success']) {
+        print('===>$successInformation');
+        Navigator.pushReplacementNamed(context, '/products');
+      } else {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            AlertDialog(
+              title: Text('An error occurred!'),
+              content: Text(successInformation['message']),
+              actions: <Widget>[
+                FlatButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: Text('OK'))
+              ],
+            );
+          },
+        );
+      }
+    }
   }
 }

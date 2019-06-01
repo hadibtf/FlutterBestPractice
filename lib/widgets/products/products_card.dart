@@ -19,7 +19,9 @@ class ProductCard extends StatelessWidget {
     return Card(
       child: Column(
         children: <Widget>[
-          Image.network(product.image),
+          FadeInImage(
+              placeholder: AssetImage('images/avengers.jpg'),
+              image: NetworkImage(product.image)),
           _buildTitlePriceContainer(),
           AddressTag(address: 'Tabriz, Parvaz'),
           Text(product.userId),
@@ -29,32 +31,35 @@ class ProductCard extends StatelessWidget {
     );
   }
 
-  ButtonBar _buildActionButtonsButtonBar(BuildContext context) {
-    return ButtonBar(
-      alignment: MainAxisAlignment.center,
-      children: <Widget>[
-        IconButton(
-          onPressed: () =>
-              Navigator.pushNamed<bool>(context, "/product/$productIndex"),
-          icon: Icon(
-            Icons.info,
-            color: Theme.of(context).accentColor,
-          ),
-        ),
-        ScopedModelDescendant<MainModel>(
-          builder: (BuildContext context, Widget child, MainModel model) {
-            return IconButton(
+  Widget _buildActionButtonsButtonBar(BuildContext context) {
+    return ScopedModelDescendant<MainModel>(
+      builder: (BuildContext context, Widget child, MainModel model) {
+        return ButtonBar(
+          alignment: MainAxisAlignment.center,
+          children: <Widget>[
+            IconButton(
+              onPressed: () =>
+                  Navigator.pushNamed<bool>(context, "/product/${model.allProducts[productIndex].id}"),
+              icon: Icon(
+                Icons.info,
+                color: Theme
+                    .of(context)
+                    .accentColor,
+              ),
+            ),
+            IconButton(
                 onPressed: () {
-                  model.selectProduct(productIndex);
+                  model.selectProduct(model.allProducts[productIndex].id);
                   model.toggleProductFavoriteStatus();
                 },
                 color: Colors.red,
                 icon: model.allProducts[productIndex].isFavorite
                     ? Icon(Icons.favorite)
-                    : Icon(Icons.favorite_border));
-          },
-        ),
-      ],
+                    : Icon(Icons.favorite_border),
+            ),
+          ],
+        );
+      },
     );
   }
 

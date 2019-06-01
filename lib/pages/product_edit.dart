@@ -27,19 +27,11 @@ class _ProductEditPageState extends State<ProductsEditPage> {
       builder: (BuildContext context, Widget child, MainModel model) {
         final Widget pageContent =
             _buildPageContent(context, model.selectedProduct);
-        return model.selectedProductIndex == null
+        return model.selectedProductIndex == -1
             ? pageContent
             : Scaffold(
                 appBar: AppBar(
                   title: Text('Edit Product'),
-                  leading: IconButton(
-                    color: Colors.white,
-                    icon: Icon(Icons.arrow_back),
-                    onPressed: () {
-                      Navigator.pop(context, true);
-                      model.deleteProduct();
-                    },
-                  ),
                 ),
                 body: pageContent,
               );
@@ -66,7 +58,7 @@ class _ProductEditPageState extends State<ProductsEditPage> {
     );
   }
 
-  GestureDetector _buildPageContent(BuildContext context, Product product) {
+  Widget _buildPageContent(BuildContext context, Product product) {
     final double deviceWidth = MediaQuery.of(context).size.width;
     final double targetWidth = deviceWidth > 550.0 ? 500.0 : deviceWidth * 0.95;
     final double targetPadding = deviceWidth - targetWidth;
@@ -97,14 +89,33 @@ class _ProductEditPageState extends State<ProductsEditPage> {
       [int selectedProductIndex]) {
     if (!_formKey.currentState.validate()) return;
     _formKey.currentState.save();
-    if (selectedProductIndex == null)
+    if (selectedProductIndex == -1)
       addProduct(
         _formData['title'],
         _formData['description'],
         _formData['image'],
         _formData['price'],
-      ).then((_) => Navigator.pushReplacementNamed(context, "/products")
-          .then((_) => setSelectedProduct(null)));
+      ).then((bool success) {
+        if (success) {
+          Navigator.pushReplacementNamed(context, "/products")
+              .then((_) => setSelectedProduct(null));
+        } else {
+          showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: Text('Something went wrong'),
+                  content: Text('Please try again!'),
+                  actions: <Widget>[
+                    FlatButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      child: Text('Ok'),
+                    )
+                  ],
+                );
+              });
+        }
+      });
     else
       updateProduct(
         _formData['title'],
@@ -115,7 +126,7 @@ class _ProductEditPageState extends State<ProductsEditPage> {
           .then((_) => setSelectedProduct(null)));
   }
 
-  TextFormField _buildTitleTextFormField(Product product) {
+  Widget _buildTitleTextFormField(Product product) {
     return TextFormField(
       initialValue: product == null ? '' : product.title,
       decoration: InputDecoration(labelText: "Product Title"),
@@ -131,7 +142,7 @@ class _ProductEditPageState extends State<ProductsEditPage> {
     );
   }
 
-  TextFormField _buildDescriptionTextFormField(Product product) {
+  Widget _buildDescriptionTextFormField(Product product) {
     return TextFormField(
       initialValue: product == null ? '' : product.description,
       decoration: InputDecoration(labelText: "Product Description"),
@@ -147,7 +158,7 @@ class _ProductEditPageState extends State<ProductsEditPage> {
     );
   }
 
-  TextFormField _buildPriceTextFormField(Product product) {
+  Widget _buildPriceTextFormField(Product product) {
     return TextFormField(
       initialValue: product == null ? '' : product.price.toString(),
       decoration: InputDecoration(labelText: "Product Price"),

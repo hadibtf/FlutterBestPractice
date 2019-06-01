@@ -34,7 +34,7 @@ class _ProductListPageState extends State<ProductListPage> {
               onDismissed: (DismissDirection direction) {
                 if (direction == DismissDirection.startToEnd ||
                     direction == DismissDirection.endToStart) {
-                  model.selectProduct(index);
+                  model.selectProduct(model.allProducts[index].id);
                   model.deleteProduct();
                 }
               },
@@ -53,8 +53,9 @@ class _ProductListPageState extends State<ProductListPage> {
                           Text(
                             'Delete',
                             style: TextStyle(
-                                color: Colors.white,
-                                fontFamily: 'OswaldSemiBold'),
+                              color: Colors.white,
+                              fontFamily: 'OswaldSemiBold',
+                            ),
                           ),
                         ],
                       ),
@@ -100,17 +101,18 @@ class _ProductListPageState extends State<ProductListPage> {
     });
   }
 
-  Widget _buildEditIconButton(
-      BuildContext context, int index, MainModel model) {
+  Widget _buildEditIconButton(BuildContext context, int index, MainModel model) {
     return IconButton(
       icon: Icon(Icons.edit),
       onPressed: () {
-        model.selectProduct(index);
+        model.selectProduct(model.allProducts[index].id);
         Navigator.of(context).push(
           MaterialPageRoute(builder: (BuildContext context) {
             return ProductsEditPage();
           }),
-        );
+        ).then(((_) {
+          model.selectProduct(null);
+        }));
       },
     );
   }
