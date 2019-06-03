@@ -85,7 +85,9 @@ class _ProductEditPageState extends State<ProductsEditPage> {
   }
 
   void _submitForm(
-      Function addProduct, Function updateProduct, Function setSelectedProduct,
+      Function addProduct,
+      Function updateProduct,
+      Function setSelectedProduct,
       [int selectedProductIndex]) {
     if (!_formKey.currentState.validate()) return;
     _formKey.currentState.save();
