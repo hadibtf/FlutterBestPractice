@@ -24,7 +24,7 @@ class ProductCard extends StatelessWidget {
               image: NetworkImage(product.image)),
           _buildTitlePriceContainer(),
           AddressTag(address: 'Tabriz, Parvaz'),
-          Text(product.userId),
+          Text(product.userEmail),
           _buildActionButtonsButtonBar(context),
         ],
       ),

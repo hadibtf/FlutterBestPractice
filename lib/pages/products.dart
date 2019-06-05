@@ -70,7 +70,6 @@ class _ProductPageState extends State<ProductsPage> {
       listTileIcon: Icons.edit,
       listTileIconColor: Colors.grey,
       routeName: '/admin',
-      context: context,
     );
   }
 }

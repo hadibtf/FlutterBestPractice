@@ -53,8 +53,7 @@ class ProductsAdminPage extends StatelessWidget {
       listTileText: 'All products',
       listTileIcon: Icons.shop,
       listTileIconColor: Colors.blue,
-      routeName: '/products',
-      context: context,
+      routeName: '/',
     );
   }
 }

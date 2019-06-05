@@ -2,9 +2,12 @@ import 'package:scoped_model/scoped_model.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'dart:async';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:rxdart/subjects.dart';
 
 import '../models/product.dart';
 import '../models/user.dart';
+import '../models/auth.dart';
 
 class ConnectedProductsModel extends Model {
   final String productsURL =
@@ -59,12 +62,13 @@ class ProductsModel extends ConnectedProductsModel {
       'description': description,
       'image': chocolateImgUrl,
       'price': price,
-      'userEmail': _authenticatedUser.id,
-      'userId': _authenticatedUser.email
+      'userEmail': _authenticatedUser.email,
+      'userId': _authenticatedUser.id
     };
     try {
-      final http.Response response =
-          await http.post(productsURL, body: json.encode(productData));
+      final http.Response response = await http.post(
+          productsURL + '?auth=${_authenticatedUser.token}',
+          body: json.encode(productData));
 
       if (response.statusCode != 200 && response.statusCode != 201) {
         _isLoading = false;
@@ -104,7 +108,8 @@ class ProductsModel extends ConnectedProductsModel {
       'userId': selectedProduct.userId,
     };
     return http
-        .put('$singleProductsURL/${selectedProduct.id}.json',
+        .put(
+            '$singleProductsURL/${selectedProduct.id}.json?auth=${_authenticatedUser.token}',
             body: jsonEncode(updateData))
         .then(
       (http.Response response) {
@@ -130,7 +135,8 @@ class ProductsModel extends ConnectedProductsModel {
     selectProduct(null);
     notifyListeners();
     http
-        .delete('$singleProductsURL/${deletedProductId}.json')
+        .delete(
+            '$singleProductsURL/${deletedProductId}.json?auth=${_authenticatedUser.token}')
         .then((http.Response response) {
       _isLoading = false;
       notifyListeners();
@@ -144,7 +150,7 @@ class ProductsModel extends ConnectedProductsModel {
     }
   }
 
-  void toggleProductFavoriteStatus() {
+  void toggleProductFavoriteStatus() async {
     final bool isCurrentlyFavorite = selectedProduct.isFavorite;
     final bool newFavoriteStatus = !isCurrentlyFavorite;
     final Product updatedProduct = Product(
@@ -159,6 +165,26 @@ class ProductsModel extends ConnectedProductsModel {
     );
     _products[selectedProductIndex] = updatedProduct;
     notifyListeners();
+    http.Response response;
+    if (newFavoriteStatus) {
+      response = await http.put('$singleProductsURL${selectedProduct.id}/wishlistUsers/${_authenticatedUser.id}.json?auth=${_authenticatedUser.token}', body: jsonEncode(true));
+    } else {
+      response = await http.put('$singleProductsURL${selectedProduct.id}/wishlistUsers/${_authenticatedUser.id}.json?auth=${_authenticatedUser.token}');
+    }
+    if (response.statusCode != 200 && response.statusCode != 201) {
+      final Product updatedProduct = Product(
+        id: selectedProduct.id,
+        description: selectedProduct.description,
+        image: selectedProduct.image,
+        price: selectedProduct.price,
+        title: selectedProduct.title,
+        isFavorite: !newFavoriteStatus,
+        userEmail: selectedProduct.userEmail,
+        userId: selectedProduct.userId,
+      );
+      _products[selectedProductIndex] = updatedProduct;
+      notifyListeners();
+    }
   }
 
   void toggleDisplayMode() {
@@ -169,7 +195,7 @@ class ProductsModel extends ConnectedProductsModel {
   Future<Null> fetchProducts() {
     _isLoading = true;
     notifyListeners();
-    return http.get(productsURL).then(
+    return http.get(productsURL + '?auth=${_authenticatedUser.token}').then(
       (http.Response response) {
         final List<Product> fetchedProductList = [];
         final Map<String, dynamic> productListData = jsonDecode(response.body);
@@ -201,26 +227,62 @@ class ProductsModel extends ConnectedProductsModel {
 }
 
 class UserModel extends ConnectedProductsModel {
-  Future<Map<String, dynamic>> login(String email, String password) async {
+  Timer _authTimer;
+
+  PublishSubject<bool> _userSubject = PublishSubject();
+
+  User get user => _authenticatedUser;
+
+  PublishSubject<bool> get userSubject => _userSubject;
+
+  Future<Map<String, dynamic>> authenticate(String email, String password,
+      [AuthMode mode = AuthMode.Login]) async {
     _isLoading = true;
     notifyListeners();
-    print('---------_______');
     final Map<String, dynamic> authData = {
       'email': email,
       'password': password,
       'returnSecureToken': true
     };
-    final http.Response response = await http.post(
-      restApiSigninURL,
-      body: jsonEncode(authData),
-      headers: {'Content-Type': 'application/json'},
-    );
+
+    http.Response response;
+
+    if (mode == AuthMode.Login) {
+      response = await http.post(
+        restApiSigninURL,
+        body: jsonEncode(authData),
+        headers: {'Content-Type': 'application/json'},
+      );
+    } else {
+      response = await http.post(
+        restApiSignupURL,
+        body: jsonEncode(authData),
+        headers: {'Content-Type': 'application/json'},
+      );
+    }
     final Map<String, dynamic> responseData = jsonDecode(response.body);
     bool hasError = true;
     String message = 'Something went wrong!';
     if (responseData.containsKey('idToken')) {
       hasError = false;
       message = 'Authentication succeeded!';
+      _authenticatedUser = User(
+        id: responseData['localId'],
+        email: email,
+        token: responseData['idToken'],
+      );
+      setAuthTimeOut(int.parse(responseData['expiresIn']));
+      _userSubject.add(true);
+      final DateTime now = DateTime.now();
+      final DateTime expiryTime =
+          now.add(Duration(seconds: int.parse(responseData['expiresIn'])));
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setString('token', responseData['idToken']);
+      prefs.setString('userEmail', email);
+      prefs.setString('userId', responseData['localId']);
+      prefs.setString('expiryTime', expiryTime.toIso8601String());
+    } else if (responseData['error']['message'] == 'EMAIL_EXISTS') {
+      message = 'This email was not found!';
     } else if (responseData['error']['message'] == 'EMAIL_NOT_FOUND') {
       message = 'This email was not found!';
     } else if (responseData['error']['message'] == 'INVALID_PASSWORD') {
@@ -231,31 +293,41 @@ class UserModel extends ConnectedProductsModel {
     return {'success': !hasError, 'message': message};
   }
 
-  Future<Map<String, dynamic>> signup(String email, String password) async {
-    _isLoading = true;
-    notifyListeners();
-    final Map<String, dynamic> authData = {
-      'email': email,
-      'password': password,
-      'returnSecureToken': true
-    };
-    final http.Response response = await http.post(
-      restApiSignupURL,
-      body: jsonEncode(authData),
-      headers: {'Content-Type': 'application/json'},
-    );
-    final Map<String, dynamic> responseData = jsonDecode(response.body);
-    bool hasError = true;
-    String message = 'Something went wrong!';
-    if (responseData.containsKey('idToken')) {
-      hasError = false;
-      message = 'Authentication succeeded!';
-    } else if (responseData['error']['message'] == 'EMAIL_EXISTS') {
-      message = 'This email already exists!';
+  void autoAuth() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String token = prefs.get('token');
+    final String expiryTimeString = prefs.getString('expiryTime');
+    if (token != null) {
+      final DateTime now = DateTime.now();
+      final DateTime parsedExpiryTime = DateTime.parse(expiryTimeString);
+      if (parsedExpiryTime.isBefore(now)) {
+        _authenticatedUser = null;
+        notifyListeners();
+        return;
+      }
+      final String userEmail = prefs.get('userEmail');
+      final String userId = prefs.get('userId');
+      _authenticatedUser = User(id: userId, email: userEmail, token: token);
+      final int tokenLifeSpan = parsedExpiryTime.difference(now).inSeconds;
+      _userSubject.add(true);
+      setAuthTimeOut(tokenLifeSpan);
+      notifyListeners();
     }
-    _isLoading = false;
-    notifyListeners();
-    return {'success': !hasError, 'message': message};
+  }
+
+  void logout() async {
+    print('LOGOUT----------');
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.remove('token');
+    prefs.remove('userId');
+    prefs.remove('userEmail');
+    _authenticatedUser = null;
+    _authTimer.cancel();
+    _userSubject.add(false);
+  }
+
+  void setAuthTimeOut(int time) {
+    _authTimer = Timer(Duration(seconds: time), logout);
   }
 }
 
