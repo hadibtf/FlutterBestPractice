@@ -167,9 +167,12 @@ class ProductsModel extends ConnectedProductsModel {
     notifyListeners();
     http.Response response;
     if (newFavoriteStatus) {
-      response = await http.put('$singleProductsURL${selectedProduct.id}/wishlistUsers/${_authenticatedUser.id}.json?auth=${_authenticatedUser.token}', body: jsonEncode(true));
+      response = await http.put(
+          '$singleProductsURL${selectedProduct.id}/wishListUsers/${_authenticatedUser.id}.json?auth=${_authenticatedUser.token}',
+          body: jsonEncode(true));
     } else {
-      response = await http.put('$singleProductsURL${selectedProduct.id}/wishlistUsers/${_authenticatedUser.id}.json?auth=${_authenticatedUser.token}');
+      response = await http.delete(
+          '$singleProductsURL${selectedProduct.id}/wishListUsers/${_authenticatedUser.id}.json?auth=${_authenticatedUser.token}');
     }
     if (response.statusCode != 200 && response.statusCode != 201) {
       final Product updatedProduct = Product(
@@ -192,7 +195,7 @@ class ProductsModel extends ConnectedProductsModel {
     notifyListeners();
   }
 
-  Future<Null> fetchProducts() {
+  Future<Null> fetchProducts({onlyForUser = false}) {
     _isLoading = true;
     notifyListeners();
     return http.get(productsURL + '?auth=${_authenticatedUser.token}').then(
@@ -207,17 +210,23 @@ class ProductsModel extends ConnectedProductsModel {
         productListData.forEach(
           (String productId, dynamic productData) {
             final Product product = Product(
-                id: productId,
-                description: productData['description'],
-                price: productData['price'],
-                image: productData['image'],
-                title: productData['title'],
-                userEmail: productData['userEmail'],
-                userId: productData['userId']);
+              id: productId,
+              description: productData['description'],
+              price: productData['price'],
+              image: productData['image'],
+              title: productData['title'],
+              userEmail: productData['userEmail'],
+              userId: productData['userId'],
+              isFavorite: productData['wishListUsers'] == null
+                  ? false
+                  : (productData['wishListUsers'] as Map<String, dynamic>)
+                      .containsKey(_authenticatedUser.id),
+            );
             fetchedProductList.add(product);
           },
         );
-        _products = fetchedProductList;
+        _products = onlyForUser ? fetchedProductList.where((Product product) {
+                return product.userId == _authenticatedUser.id;}).toList() : fetchedProductList;
         _isLoading = false;
         notifyListeners();
         _selectedProductId = null;
