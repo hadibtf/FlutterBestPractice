@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
 import '../scoped_models/main.dart';
 import '../models/product.dart';
+import '../widgets/form_inputs/location.dart';
 
 class ProductsEditPage extends StatefulWidget {
   @override
@@ -76,6 +77,8 @@ class _ProductEditPageState extends State<ProductsEditPage> {
               _buildDescriptionTextFormField(product),
               _buildPriceTextFormField(product),
               SizedBox(height: 10.0),
+              LocationInput(),
+              SizedBox(height: 10.0),
               _buildSubmitButton()
             ],
           ),
@@ -85,9 +88,7 @@ class _ProductEditPageState extends State<ProductsEditPage> {
   }
 
   void _submitForm(
-      Function addProduct,
-      Function updateProduct,
-      Function setSelectedProduct,
+      Function addProduct, Function updateProduct, Function setSelectedProduct,
       [int selectedProductIndex]) {
     if (!_formKey.currentState.validate()) return;
     _formKey.currentState.save();
